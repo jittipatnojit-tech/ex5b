@@ -12,9 +12,12 @@
     <div class="container-fluid">
 		<h1>Temperature conversion</h1>
 		<img src="images/temperature.gif" class="img-fluid" alt="runner logo" width="150" height="150"><br>
+		
+		<hr> 
+
 		<form role="form" method="GET">
 		  <div class="form-group">
-			<label for="tem">Current temperature:</label>
+			<label for="tem">Current temperature (Celsius):</label>
 			<input type="text" class="form-control" name="temp" id="temp" value="20">
 		  </div><br>
 		  <div class="form-group">
@@ -32,37 +35,50 @@
 	</div>
 	
 	<script>
+		// ข้อ 8: แยก Function สำหรับ Validate ข้อมูล [cite: 35]
+		function validateTemp(t) {
+			if(isNaN(t)){
+				return "Please verify whether the temperature value is correct!!!";
+			}
+			if(!(t >= -100 && t <= 100)){
+				return "Tempurature entered (in Celsius) must be between -100 and 100 C'";
+			}
+			return null;
+		}
+
+		// ข้อ 9: แยก Function สำหรับการคำนวณ [cite: 39]
+		function convertTemperature(t, u) {
+			var t1, u1;
+			if(u == "F"){
+				t1 = t * (9/5) + 32;
+				u1 = "Fahrenheit";
+			}else if(u == "K"){
+				t1 = t + 273.15;
+				u1 = "Kelvin";
+			}else if(u == "R"){
+				t1 = t * (4/5);
+				u1 = "Réaumur";
+			}
+			return { val: t1, unit: u1 };
+		}
+
 	    $(document).ready(function(){
 			$("button").click(function(){
-			   var t = Number($('#temp').val());//celsius
+			   var t = Number($('#temp').val());
 			   var u = $('#unit').val();
 			   
-			   if(isNaN(t)){
-					msg = "Please verify whether the temperature value is correct!!!";
-					alert(msg);
+			   // เรียกใช้ function validate
+			   var errorMsg = validateTemp(t);
+			   if(errorMsg){
+					alert(errorMsg);
 					return;
 			   }
-			   if(!(t >= -100 && t <= 100)){
-					msg = "Tempurature entered (in Celsius) must be between 0 and 100 C'";
-					alert(msg);
-					return;
-			   }
+
+			   // เรียกใช้ function คำนวณ
+			   var result = convertTemperature(t, u);
 			   
-			   var t1;
-			   var u1;
-			   
-			   if(u == "F"){
-					t1 = t * (9/5) + 32;
-					u1 = "Fahrenheit";
-			   }else if(u == "K"){
-					t1 =  t + 273.15;
-					u1 = "Kelvin";
-			   }else if(u == "R"){
-					t1 = t * (4/5);
-                    u1 = "Réaumur";
-			   }
-			   
-			   alert("Temperature is "+t1+" in "+u1);
+			   // ข้อ 10: แสดงผลใน <div> แทน alert [cite: 43, 46]
+			   $('#result').html("Temperature is " + result.val + " in " + result.unit);
 			});
 		});
 	</script>
